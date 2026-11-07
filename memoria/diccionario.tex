@@ -1,0 +1,452 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{EMPLEADO. Superclase de la especialización parcial y disjunta de empleados (RN-05).}
+\label{dic:empleado}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni} & VARCHAR2(9) & No & DNI del empleado & PK pk\_empleado; CHECK formato 8 dígitos + letra (chk\_empleado\_dni) \\
+\texttt{nss} & VARCHAR2(12) & No & Número de la Seguridad Social & NN nn\_empleado\_nss; UNIQUE uq\_empleado\_nss; CHECK 12 dígitos (chk\_empleado\_nss) \\
+\texttt{nombre} & VARCHAR2(100) & No & Nombre completo & NN nn\_empleado\_nombre \\
+\texttt{f\_nac} & DATE & Sí & Fecha de nacimiento & -- \\
+\texttt{tipo\_empleado} & VARCHAR2(10) & Sí & Discriminante del rol operativo; NULL si no tiene rol (parcialidad) & CHECK IN (MAQUINISTA, REVISOR, TECNICO, SEGURIDAD) (chk\_empleado\_tipo); UNIQUE (dni, tipo\_empleado) (uq\_empleado\_dni\_tipo) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{EMPLEADO\_TELEFONO. Atributo multivaluado teléfono de EMPLEADO, entre 1 y 2 valores (RN-05).}
+\label{dic:empleado_telefono}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni\_empleado} & VARCHAR2(9) & No & Empleado titular & PK; FK → EMPLEADO ON DELETE CASCADE (fk\_emptel\_empleado) \\
+\texttt{orden} & NUMBER(1) & No & Posición del teléfono (1 o 2) & PK; CHECK IN (1,2) (chk\_emptel\_orden): limita a dos teléfonos \\
+\texttt{telefono} & VARCHAR2(15) & No & Número de contacto & NN; UNIQUE (dni\_empleado, telefono); CHECK formato numérico 9–14 cifras \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{ESTACION. Entidad fuerte con dirección compuesta; incorpora la relación 1:1 DIRIGE (RN-01, RN-06).}
+\label{dic:estacion}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cod\_estacion} & VARCHAR2(10) & No & Código de la estación & PK pk\_estacion \\
+\texttt{nombre} & VARCHAR2(100) & No & Nombre comercial & NN nn\_estacion\_nombre \\
+\texttt{calle, numero, ciudad} & VARCHAR2 (100, 10, 50) & Sí & Componentes de la dirección & -- \\
+\texttt{cp} & VARCHAR2(5) & Sí & Código postal (dirección) & CHECK 5 dígitos (chk\_estacion\_cp) \\
+\texttt{num\_vias} & NUMBER(3) & Sí & Vías operativas & CHECK > 0 (chk\_estacion\_vias) \\
+\texttt{telefono} & VARCHAR2(15) & Sí & Teléfono de contacto & -- \\
+\texttt{dni\_jefe} & VARCHAR2(9) & No & Empleado que dirige la estación (DIRIGE) & NN; UNIQUE (uq\_estacion\_jefe); FK → EMPLEADO, sin acción (fk\_estacion\_jefe) \\
+\texttt{f\_inicio\_jefatura} & DATE & No & Atributo de DIRIGE: inicio de la jefatura & NN nn\_estacion\_finicio \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{MAQUINISTA. Subclase de EMPLEADO (RN-05).}
+\label{dic:maquinista}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni} & VARCHAR2(9) & No & Empleado maquinista & PK; FK (dni, tipo\_empleado) → EMPLEADO ON DELETE CASCADE \\
+\texttt{tipo\_empleado} & VARCHAR2(10) & No & Discriminante fijo & DEFAULT y CHECK = MAQUINISTA; NN \\
+\texttt{horas\_conduccion} & NUMBER(6) & Sí & Horas de conducción acumuladas & DEFAULT 0; CHECK ≥ 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{REVISOR. Subclase de EMPLEADO (RN-05).}
+\label{dic:revisor}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni} & VARCHAR2(9) & No & Empleado revisor & PK; FK (dni, tipo\_empleado) → EMPLEADO ON DELETE CASCADE \\
+\texttt{tipo\_empleado} & VARCHAR2(10) & No & Discriminante fijo & DEFAULT y CHECK = REVISOR; NN \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{REVISOR\_IDIOMA. Atributo multivaluado idiomas de REVISOR (RN-05).}
+\label{dic:revisor_idioma}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni\_revisor} & VARCHAR2(9) & No & Revisor & PK; FK → REVISOR ON DELETE CASCADE \\
+\texttt{idioma} & VARCHAR2(30) & No & Idioma que domina & PK \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{TECNICO. Subclase de EMPLEADO; incluye la reflexiva SUPERVISA (RN-05, RN-08).}
+\label{dic:tecnico}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni} & VARCHAR2(9) & No & Empleado técnico & PK; FK (dni, tipo\_empleado) → EMPLEADO ON DELETE CASCADE \\
+\texttt{tipo\_empleado} & VARCHAR2(10) & No & Discriminante fijo & DEFAULT y CHECK = TECNICO; NN \\
+\texttt{especialidad} & VARCHAR2(100) & Sí & Especialidad técnica & -- \\
+\texttt{dni\_supervisor} & VARCHAR2(9) & Sí & Rol supervisor de SUPERVISA; NULL si no tiene & FK reflexiva → TECNICO ON DELETE SET NULL; CHECK ≠ dni (chk\_tecnico\_no\_autosup) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{SEGURIDAD. Subclase de EMPLEADO; incluye la relación 1:N CONTROLA (RN-05, RN-07).}
+\label{dic:seguridad}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni} & VARCHAR2(9) & No & Empleado de seguridad & PK; FK (dni, tipo\_empleado) → EMPLEADO ON DELETE CASCADE \\
+\texttt{tipo\_empleado} & VARCHAR2(10) & No & Discriminante fijo & DEFAULT y CHECK = SEGURIDAD; NN \\
+\texttt{nivel} & NUMBER(1) & Sí & Nivel asignado & CHECK BETWEEN 1 AND 5 \\
+\texttt{cod\_estacion} & VARCHAR2(10) & No & Estación que controla & NN; FK → ESTACION, sin acción \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{ANDEN. Entidad débil de ESTACION (RN-02).}
+\label{dic:anden}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cod\_estacion} & VARCHAR2(10) & No & Estación propietaria & PK; FK → ESTACION ON DELETE CASCADE \\
+\texttt{num\_anden} & NUMBER(3) & No & Clave parcial & PK; CHECK > 0 \\
+\texttt{longitud} & NUMBER(5,1) & Sí & Longitud en metros & CHECK > 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{TAQUILLA. Entidad débil de ESTACION (RN-03).}
+\label{dic:taquilla}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cod\_estacion} & VARCHAR2(10) & No & Estación propietaria & PK; FK → ESTACION ON DELETE CASCADE \\
+\texttt{num\_taquilla} & NUMBER(3) & No & Clave parcial & PK; CHECK > 0 \\
+\texttt{estado} & VARCHAR2(15) & No & Estado actual & DEFAULT Cerrada; CHECK IN (Abierta, Cerrada, Mantenimiento) \\
+\texttt{turno} & CHAR(1) & Sí & Turno de operación & CHECK IN (M, T, N) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{ALMACEN. Entidad fuerte con dirección compuesta (RN-04).}
+\label{dic:almacen}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cod\_alm} & VARCHAR2(10) & No & Código del almacén & PK \\
+\texttt{telefono} & VARCHAR2(15) & Sí & Teléfono de contacto & -- \\
+\texttt{max\_trenes} & NUMBER(4) & Sí & Capacidad máxima de trenes & CHECK > 0 \\
+\texttt{calle, numero, ciudad} & VARCHAR2 & Sí & Componentes de la dirección & -- \\
+\texttt{cp} & VARCHAR2(5) & Sí & Código postal & CHECK 5 dígitos \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{PASAJERO. Entidad fuerte; edad es derivada y no se almacena (RN-19).}
+\label{dic:pasajero}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni} & VARCHAR2(9) & No & DNI del pasajero & PK; CHECK formato \\
+\texttt{nombre} & VARCHAR2(100) & No & Nombre completo & NN \\
+\texttt{correo} & VARCHAR2(100) & Sí & Correo electrónico & UNIQUE (uq\_pasajero\_correo); CHECK contiene @ \\
+\texttt{f\_nac} & DATE & Sí & Fecha de nacimiento (base de edad) & CHECK ≥ 01/01/1900 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{RUTA. Entidad fuerte; incluye las relaciones 1:N ORIGEN y DESTINO con ESTACION (RN-14).}
+\label{dic:ruta}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cod\_ruta} & VARCHAR2(10) & No & Código de la ruta & PK \\
+\texttt{cod\_estacion\_origen} & VARCHAR2(10) & No & Estación de origen (ORIGEN) & NN nn\_ruta\_origen; FK → ESTACION, sin acción (fk\_ruta\_origen) \\
+\texttt{cod\_estacion\_destino} & VARCHAR2(10) & No & Estación de destino (DESTINO) & NN nn\_ruta\_destino; FK → ESTACION, sin acción (fk\_ruta\_destino); CHECK ≠ origen (chk\_ruta\_extremos); UNIQUE (cod\_ruta, cod\_estacion\_destino) (uq\_ruta\_destino), referenciada por VIAJE \\
+\texttt{distancia} & NUMBER(7,2) & Sí & Distancia en km & CHECK > 0 (chk\_ruta\_distancia) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{PROVEEDOR. Entidad fuerte con dirección compuesta (RN-24).}
+\label{dic:proveedor}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cif} & VARCHAR2(9) & No & CIF & PK; CHECK formato letra + 7 dígitos + control \\
+\texttt{nombre} & VARCHAR2(100) & No & Nombre comercial & NN \\
+\texttt{email} & VARCHAR2(100) & Sí & Correo de contacto & CHECK contiene @ \\
+\texttt{calle, numero, ciudad} & VARCHAR2 & Sí & Componentes de la dirección & -- \\
+\texttt{cp} & VARCHAR2(5) & Sí & Código postal & CHECK 5 dígitos \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{PIEZA. Entidad fuerte; incluye SUMINISTRA (RN-24, RN-25).}
+\label{dic:pieza}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{cod\_pieza} & VARCHAR2(10) & No & Código de pieza & PK \\
+\texttt{nombre} & VARCHAR2(100) & No & Nombre comercial & NN \\
+\texttt{descripcion} & VARCHAR2(255) & Sí & Descripción técnica & -- \\
+\texttt{precio} & NUMBER(8,2) & Sí & Precio unitario (€) & CHECK ≥ 0 \\
+\texttt{cif\_proveedor} & VARCHAR2(9) & No & Proveedor que la suministra & NN; FK → PROVEEDOR, sin acción \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{BULTO. Entidad débil de PASAJERO; dimensiones es compuesto (RN-22).}
+\label{dic:bulto}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni\_pasajero} & VARCHAR2(9) & No & Pasajero propietario & PK; FK → PASAJERO ON DELETE CASCADE \\
+\texttt{num\_bulto} & NUMBER(3) & No & Clave parcial & PK; CHECK > 0 \\
+\texttt{peso\_kg} & NUMBER(5,2) & Sí & Peso en kg & CHECK > 0 \\
+\texttt{ancho\_cm, largo\_cm} & NUMBER(5,1) & Sí & Componentes de dimensiones (cm) & CHECK ambos > 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{RECLAMACION. Entidad fuerte; incluye GENERA (RN-23).}
+\label{dic:reclamacion}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{id\_reclamacion} & VARCHAR2(10) & No & Identificador & PK \\
+\texttt{fecha} & DATE & No & Fecha de interposición & DEFAULT SYSDATE; NN \\
+\texttt{motivo} & VARCHAR2(500) & No & Motivo detallado & NN \\
+\texttt{dni\_pasajero} & VARCHAR2(9) & No & Pasajero que la genera & NN; FK → PASAJERO, sin acción \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{TREN. Superclase de la generalización total y solapada; incluye GUARDA (RN-09, RN-10).}
+\label{dic:tren}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{num\_serie} & VARCHAR2(15) & No & Número de serie & PK \\
+\texttt{modelo} & VARCHAR2(50) & Sí & Modelo & -- \\
+\texttt{potencia\_kw} & NUMBER(6) & Sí & Potencia en kW & CHECK > 0 \\
+\texttt{fecha\_fabr} & DATE & Sí & Fecha de fabricación & -- \\
+\texttt{num\_max\_vagones} & NUMBER(3) & Sí & Máximo de vagones & CHECK > 0 \\
+\texttt{cod\_alm} & VARCHAR2(10) & No & Almacén que lo guarda & NN; FK → ALMACEN, sin acción \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{TREN\_PASAJEROS. Subclase de TREN (RN-10).}
+\label{dic:tren_pasajeros}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{num\_serie} & VARCHAR2(15) & No & Tren & PK; FK → TREN ON DELETE CASCADE \\
+\texttt{clase} & VARCHAR2(20) & Sí & Clase de servicio & CHECK IN (Cercanias, Media Distancia, Larga Distancia, Alta Velocidad) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{TREN\_MERCANCIA. Subclase de TREN (RN-10).}
+\label{dic:tren_mercancia}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{num\_serie} & VARCHAR2(15) & No & Tren & PK; FK → TREN ON DELETE CASCADE \\
+\texttt{tipo\_mercancia} & VARCHAR2(100) & Sí & Mercancía transportada & -- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{TREN\_MIXTO. Subclase compartida de TREN\_PASAJEROS y TREN\_MERCANCIA (RN-11).}
+\label{dic:tren_mixto}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{num\_serie} & VARCHAR2(15) & No & Tren mixto & PK; FK → TREN\_PASAJEROS y FK → TREN\_MERCANCIA, ambas ON DELETE CASCADE \\
+\texttt{carga\_max\_con\_pasaje} & NUMBER(6,2) & No & Toneladas autorizadas con viajeros a bordo & NN; CHECK > 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{VAGON. Entidad débil de TREN; incluye la reflexiva 1:1 ACOPLA (RN-12, RN-13).}
+\label{dic:vagon}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{num\_serie\_tren} & VARCHAR2(15) & No & Tren propietario & PK; FK → TREN ON DELETE CASCADE \\
+\texttt{num\_vagon} & NUMBER(3) & No & Clave parcial & PK; CHECK > 0 \\
+\texttt{tipo\_vagon} & VARCHAR2(12) & No & Tipo & NN; CHECK IN (Pasajeros, Restaurante, Mercancias) \\
+\texttt{plazas} & NUMBER(4) & Sí & Capacidad en plazas & CHECK de fila con tipo (chk\_vagon\_capacidad) \\
+\texttt{toneladas} & NUMBER(6,2) & Sí & Capacidad en toneladas & CHECK de fila con tipo (chk\_vagon\_capacidad) \\
+\texttt{anho\_fab} & NUMBER(4) & Sí & Año de fabricación & CHECK BETWEEN 1900 AND 2100 \\
+\texttt{vagon\_sig\_num} & NUMBER(3) & Sí & Rol sigue de ACOPLA; NULL si es el último & FK (num\_serie\_tren, vagon\_sig\_num) → VAGON, sin acción; UNIQUE (uq\_vagon\_siguiente); CHECK ≠ num\_vagon \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{INSTALACION. Relación ternaria INSTALA entre TECNICO, PIEZA y TREN con su atributo multivaluado fecha\_instalacion (RN-26).}
+\label{dic:instalacion}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni\_tecnico} & VARCHAR2(9) & No & Técnico que instala & PK; FK → TECNICO, sin acción \\
+\texttt{cod\_pieza} & VARCHAR2(10) & No & Pieza instalada & PK; FK → PIEZA, sin acción \\
+\texttt{num\_serie\_tren} & VARCHAR2(15) & No & Tren que la recibe & PK; FK → TREN, sin acción \\
+\texttt{fecha\_instalacion} & DATE & No & Atributo multivaluado de la relación: cada fecha en que se realizó la instalación & PK \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{VIAJE. Agregación de la N:M CUBRE (TREN–RUTA); incluye OPERA y LLEGA (RN-15, RN-16, RN-18).}
+\label{dic:viaje}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{num\_serie\_tren} & VARCHAR2(15) & No & Tren & PK; FK → TREN, sin acción \\
+\texttt{cod\_ruta} & VARCHAR2(10) & No & Ruta & PK; FK → RUTA, sin acción \\
+\texttt{fecha\_salida} & DATE & No & Fecha y hora de salida & PK \\
+\texttt{fecha\_llegada} & DATE & No & Fecha y hora de llegada & NN; CHECK > fecha\_salida \\
+\texttt{duracion\_h} & NUMBER (virtual) & -- & Derivado: duración en horas & GENERATED ALWAYS AS ((llegada − salida)·24) VIRTUAL \\
+\texttt{dni\_maquinista} & VARCHAR2(9) & No & Maquinista que lo conduce (OPERA) & NN; FK → MAQUINISTA, sin acción \\
+\texttt{cod\_estacion\_llegada, num\_anden\_llegada} & VARCHAR2(10), NUMBER(3) & No & Andén de llegada (LLEGA) & NN; FK compuesta → ANDEN, sin acción (fk\_viaje\_anden); FK (cod\_ruta, cod\_estacion\_llegada) → RUTA (cod\_ruta, cod\_estacion\_destino) (fk\_viaje\_destino): el andén está en la estación destino \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{REVISOR\_VIAJE. Relación N:M REVISA entre REVISOR y VIAJE (RN-17).}
+\label{dic:revisor_viaje}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{dni\_revisor} & VARCHAR2(9) & No & Revisor & PK; FK → REVISOR, sin acción \\
+\texttt{num\_serie\_tren, cod\_ruta, fecha\_salida} & (como VIAJE) & No & Viaje revisado & PK; FK compuesta → VIAJE ON DELETE CASCADE \\
+\texttt{incidencias} & NUMBER(3) & No & Atributo de la relación & DEFAULT 0; NN; CHECK ≥ 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{BILLETE. Superclase de la especialización total y disjunta; incluye VENDE, COMPRA y CORRESPONDE (RN-20, RN-21).}
+\label{dic:billete}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{localizador} & VARCHAR2(10) & No & Código localizador & PK \\
+\texttt{tipo\_billete} & VARCHAR2(8) & No & Discriminante (totalidad) & NN; CHECK IN (Clasico, Especial); UNIQUE (localizador, tipo\_billete) \\
+\texttt{f\_compra} & DATE & No & Fecha de compra & DEFAULT SYSDATE; NN \\
+\texttt{precio} & NUMBER(6,2) & No & Importe abonado (€) & NN; CHECK ≥ 0 \\
+\texttt{asiento} & VARCHAR2(5) & No & Asiento asignado & NN; UNIQUE con el viaje (uq\_billete\_asiento) \\
+\texttt{cod\_estacion\_taq, num\_taquilla} & VARCHAR2(10), NUMBER(3) & No & Taquilla que lo vende (VENDE) & NN; FK compuesta → TAQUILLA, sin acción \\
+\texttt{dni\_pasajero} & VARCHAR2(9) & No & Pasajero que lo compra (COMPRA) & NN; FK → PASAJERO, sin acción \\
+\texttt{num\_serie\_tren, cod\_ruta, fecha\_salida} & (como VIAJE) & No & Viaje del billete (CORRESPONDE) & NN; FK compuesta → VIAJE, sin acción \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{BILLETE\_CLASICO. Subclase de BILLETE (RN-21).}
+\label{dic:billete_clasico}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{localizador} & VARCHAR2(10) & No & Billete & PK; FK (localizador, tipo\_billete) → BILLETE ON DELETE CASCADE \\
+\texttt{tipo\_billete} & VARCHAR2(8) & No & Discriminante fijo & DEFAULT y CHECK = Clasico; NN \\
+\texttt{tarifa} & VARCHAR2(8) & No & Tarifa comercial & NN; CHECK IN (Basico, Elige, Premium) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{BILLETE\_ESPECIAL. Subclase de BILLETE (RN-21).}
+\label{dic:billete_especial}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.75cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Nulo} & \textbf{Significado} & \textbf{Restricciones} \\
+\midrule
+\texttt{localizador} & VARCHAR2(10) & No & Billete & PK; FK (localizador, tipo\_billete) → BILLETE ON DELETE CASCADE \\
+\texttt{tipo\_billete} & VARCHAR2(8) & No & Discriminante fijo & DEFAULT y CHECK = Especial; NN \\
+\texttt{porcentaje\_dto} & NUMBER(5,2) & No & Descuento aplicado (\%) & NN; CHECK > 0 y ≤ 100 \\
+\texttt{motivo\_dto} & VARCHAR2(255) & No & Motivo del descuento & NN \\
+\bottomrule
+\end{tabularx}
+\end{table}

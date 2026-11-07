@@ -1,0 +1,19 @@
+# Ficheros auxiliares de LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+# PDFs que genera la compilación dentro de memoria/ y cambios/
+memoria/main.pdf
+cambios/cambios.pdf
+# Sistema
+.DS_Store
+Thumbs.db
+__pycache__/

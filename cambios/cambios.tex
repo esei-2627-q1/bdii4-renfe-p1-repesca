@@ -1,0 +1,554 @@
+% =============================================================================
+%  E1_REP_BDII4_RENFE_CAM  ·  Documento de cambios de la repesca
+%  Compilar con pdfLaTeX. Necesita figuras/logo_uvigo.png
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\babelprovide[import,main]{spanish}
+\IfFileExists{XCharter.sty}{\usepackage{XCharter}}{\usepackage{charter}}
+\IfFileExists{beramono.sty}{\usepackage[scaled=0.85]{beramono}}{\usepackage{courier}}
+\usepackage{microtype}
+\usepackage{newunicodechar}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+
+\usepackage[a4paper,top=2.6cm,bottom=2.6cm,left=2.5cm,right=2.5cm,headheight=14pt]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\definecolor{azuluvigo}{RGB}{0,51,102}
+\definecolor{grisclaro}{RGB}{242,242,242}
+\usepackage{graphicx}
+\usepackage{array,tabularx,longtable,booktabs}
+\usepackage{caption}
+\captionsetup{font=small,labelfont={bf,color=azuluvigo},justification=raggedright,singlelinecheck=false}
+\captionsetup[table]{name=Tabla,position=top}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+\usepackage{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={BDII4 RENFE - Documento de cambios (repesca E1)},pdfauthor={Grupo BDII4}}
+
+\renewcommand{\arraystretch}{1.2}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2.5em}
+\DeclareRobustCommand{\_}{\textunderscore\allowbreak}
+\pdfstringdefDisableCommands{\def\_{\textunderscore}}
+
+\titleformat{\section}{\Large\bfseries\color{azuluvigo}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{azuluvigo}}{\thesubsection.}{0.6em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}BDII4 :: RENFE}
+\fancyhead[R]{\small\color{gray}Documento de cambios · Repesca E1}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\tb}[1]{\texttt{#1}}
+\newcommand{\INF}{\textbf{Informe de evaluación.}~}
+\newcommand{\REV}[1]{\textbf{Revisión del grupo} (enunciado, #1).~}
+
+% Ficha de un cambio: ID, título, observación, cambio, motivo, ubicación, comprobación
+\newcommand{\cambio}[7]{%
+\begin{tcolorbox}[colback=white,colframe=azuluvigo,colbacktitle=azuluvigo!8,coltitle=azuluvigo,
+  title={\textbf{#1}\quad #2},fonttitle=\normalsize,boxrule=0.6pt,arc=1mm,
+  left=2mm,right=2mm,top=1mm,bottom=1mm,before skip=6pt,after skip=6pt]
+\small
+\begin{tabularx}{\linewidth}{@{}>{\bfseries\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}X@{}}
+Observación & #3\\
+Cambio & #4\\
+Motivo & #5\\
+Ubicación & #6\\
+Comprobación & #7\\
+\end{tabularx}
+\end{tcolorbox}}
+
+% =============================================================================
+\begin{document}
+
+\begin{titlepage}
+\centering
+\IfFileExists{figuras/logo_uvigo.png}{\includegraphics[height=4.2cm]{figuras/logo_uvigo.png}}{}\par
+\vspace{0.6cm}
+{\Large\scshape Universidade de Vigo}\par
+\vspace{0.15cm}
+{\large\scshape Escola Superior de Enxeñaría Informática}\par
+\vspace{0.15cm}
+{\normalsize Bases de Datos II · Curso 2026/2027}\par
+\vspace{2.2cm}
+{\color{azuluvigo}\rule{\linewidth}{1.2pt}}\par
+\vspace{0.4cm}
+{\Huge\bfseries Documento de cambios\par}
+\vspace{0.3cm}
+{\Large Repesca del Entregable 1: EER y DDL\par}
+\vspace{0.4cm}
+{\color{azuluvigo}\rule{\linewidth}{1.2pt}}\par
+\vspace{1.2cm}
+\begin{tabular}{rl}
+\textbf{Código del equipo:} & BDII4 \\
+\textbf{Temática:} & RENFE \\
+\textbf{Ficheros asociados:} & \tb{E1\_REP\_BDII4\_RENFE\_MEM.pdf} \\
+ & \tb{E1\_REP\_BDII4\_RENFE\_SQL.sql} \\
+\end{tabular}
+\vfill
+{\large
+Alejandro Francisco Pérez Rodríguez\\[3pt]
+Mario Pérez González\\[3pt]
+Jacobo Montero Naranjo\\[3pt]
+Pablo Regueira Castaño\par}
+\vspace{1.2cm}
+{\large \today\par}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+% =============================================================================
+\section{Introducción}
+% =============================================================================
+Este documento recoge todas las modificaciones introducidas en la memoria y en el script SQL respecto a la entrega original del 06/10/2026. Para cada cambio se indican la observación que lo motiva, qué se ha modificado, por qué, dónde se encuentra y cómo se ha comprobado.
+
+Las observaciones proceden de dos fuentes, que se distinguen en cada ficha:
+\begin{itemize}
+\item \textbf{Informe de evaluación}: las indicaciones del profesor sobre la presentación del documento (aspecto poco cuidado, tablas partidas, ausencia de índice y portada mejorable) y las recomendaciones generales de la convocatoria de repesca (texto justificado, redacción clara, diagramas legibles, tablas bien presentadas y referencias coherentes).
+\item \textbf{Revisión del grupo}: al rehacer la documentación revisamos la entrega completa frente al enunciado de la práctica y los apuntes de EER, y encontramos errores de contenido que también se han corregido. Para cada uno se cita el apartado del enunciado o de los apuntes afectado. Esta revisión, la maquetación de la memoria y la organización de este documento se hicieron con apoyo de una herramienta de IA, como se declara en la memoria (§9).
+\end{itemize}
+
+Las ubicaciones se refieren a los apartados de la memoria corregida (\emph{Memoria §x}) y a las secciones numeradas del script (\emph{SQL §x}). Las comprobaciones de la parte SQL corresponden a la ejecución del script completo en Oracle 26ai, que terminó con \textbf{50 pruebas correctas y 0 fallidas} (Memoria, Apéndice A).
+
+La sección~\ref{sec:final} recoge los cambios de una revisión final de la entrega frente a la lista de comprobación del enunciado (§9), hecha después de las anteriores. Algunos de ellos completan fichas previas, que se han actualizado para que no haya contradicciones (P-05, M-02).
+
+% =============================================================================
+\section{Resumen de cambios}
+% =============================================================================
+{\small
+\begin{longtable}{@{}>{\bfseries}p{1.1cm} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{10.6cm}@{}}
+\caption{Relación de cambios.}\\
+\toprule
+\textbf{ID} & \textbf{Ámbito} & \textbf{Cambio} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Ámbito} & \textbf{Cambio} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+P-01 & Presentación & Nueva portada \\
+P-02 & Presentación & Índice automático \\
+P-03 & Presentación & Tablas que no se parten y con cabecera repetida \\
+P-04 & Presentación & Maquetación uniforme y texto justificado \\
+P-05 & Presentación & Diagrama EER redibujado, legible y con leyenda de notación \\
+P-06 & Presentación & Reglas numeradas en orden y terminología única \\
+P-07 & Presentación & Diagrama EER: vista global y cuatro ampliaciones legibles al 100\,\% \\
+\midrule
+M-01 & Memoria + SQL & Memoria y script coherentes en vistas y pruebas \\
+M-02 & Memoria & Recuento de mínimos corregido \\
+M-03 & Memoria & Nuevo apartado de modelo relacional y decisiones de transformación \\
+M-04 & Memoria & Diccionario completo con significado y tipo \\
+M-05 & Memoria & Restricciones preservadas y que requieren comprobación adicional \\
+M-06 & Memoria & Reglas de negocio y supuestos reescritos \\
+M-07 & Memoria & Tabla de justificación completa \\
+M-08 & Memoria & Limitaciones y alternativas descartadas actualizadas \\
+M-09 & Memoria & Uso de IA detallado y apéndice con la salida de las pruebas \\
+\midrule
+E-01 & Modelo & Billete: de categorización a especialización disjunta y total \\
+E-02 & Modelo & Nueva subclase compartida Tren\_Mixto \\
+E-03 & Modelo & Supervisión de técnicos 1:N \\
+E-04 & Modelo & Nueva relación 1:1 DIRIGE \\
+E-05 & Modelo & Billete ligado al viaje; se elimina Pasajero–Viaje \\
+E-06 & Modelo & La llegada a andén pasa del tren al viaje \\
+E-07 & Modelo & Atributos multivaluados (idiomas y teléfonos) \\
+E-08 & Modelo & Atributos derivados (edad y duración) \\
+E-09 & Modelo & Capacidad del vagón en plazas o toneladas \\
+E-10 & Modelo & Cardinalidades mínimas revisadas \\
+E-11 & Modelo & Roles de la reflexiva ACOPLA \\
+\midrule
+S-01 & SQL & Borrado previo con IF EXISTS \\
+S-02 & SQL & Disyunción de Empleado implantada \\
+S-03 & SQL & 1:1 de ACOPLA garantizada con UNIQUE \\
+S-04 & SQL & Convención de nombres y restricciones nombradas \\
+S-05 & SQL & Política de acciones referenciales coherente \\
+S-06 & SQL & Nuevos CHECK de dominio y de fila \\
+S-07 & SQL & Vistas con columnas enumeradas y justificación correcta \\
+S-08 & SQL & Datos de prueba para todas las tablas \\
+S-09 & SQL & Batería de pruebas completa y controlada \\
+S-10 & SQL & Transacciones, tipos de datos y comentarios \\
+\midrule
+F-01 & Modelo & Origen y destino de Ruta como relaciones con Estación \\
+F-02 & Modelo & Fecha de instalación multivaluada (EER y relacional coherentes) \\
+F-03 & Modelo & REVISA: Viaje participa con (0,N) \\
+F-04 & Modelo & Jefes de estación sin rol operativo \\
+F-05 & Modelo & Notación de clave parcial y nombres de relaciones identificadoras \\
+F-06 & Memoria & Elementos que cubren varios mínimos \\
+F-07 & Memoria & Criterio de pertenencia y justificación de atributos \\
+F-08 & SQL & Comentarios con la numeración y la terminología de la memoria \\
+F-09 & SQL & Datos de prueba coherentes con las reglas \\
+F-10 & SQL & Pruebas válidas explícitas y nuevas comprobaciones \\
+\end{longtable}
+}
+
+% =============================================================================
+\section{Cambios de presentación}
+% =============================================================================
+\cambio{P-01}{Portada}
+{\INF La portada no tenía la calidad esperada.}
+{Portada nueva con el escudo de la Universidade de Vigo, escuela, asignatura y curso, título de la práctica, código del equipo, temática, tipo de entrega, los cuatro integrantes y fecha.}
+{El enunciado (§5) exige portada con código del equipo, temática, integrantes y fecha, y una presentación cuidada.}
+{Memoria, portada.}
+{Revisión visual del PDF generado.}
+
+\cambio{P-02}{Índice}
+{\INF La memoria no tenía índice.}
+{Índice generado automáticamente a partir de los apartados, con enlaces a cada sección.}
+{Facilita la navegación en un documento de 36 páginas y garantiza que los títulos y la numeración coinciden con el contenido.}
+{Memoria, página 2.}
+{Comprobado que cada entrada del índice lleva al apartado correcto.}
+
+\cambio{P-03}{Tablas no partidas}
+{\INF Las tablas aparecían partidas entre páginas y no se veían bien.}
+{El diccionario se presenta como una tabla independiente por cada tabla de la base de datos, que nunca se divide entre páginas. La tabla de justificación, la única demasiado larga para una página, repite la cabecera en cada página y no corta ninguna fila. Todas las tablas usan el mismo estilo (filetes horizontales, cabecera en negrita y anchos de columna fijos) y llevan título y número.}
+{Una tabla cortada a mitad de fila o sin cabecera obliga a reconstruirla mentalmente y dificulta la corrección.}
+{Memoria §2.2, §2.3, §3.3, §4, §5.3 y §7.}
+{Revisión página a página del PDF: ninguna tabla queda cortada.}
+
+\cambio{P-04}{Maquetación y redacción}
+{\INF El PDF no tenía un aspecto cuidado. Se recomendaba texto justificado y redacción clara.}
+{La memoria se ha rehecho en LaTeX con texto justificado, tipografía y márgenes uniformes, encabezado con el código del equipo y numeración de páginas. Los nombres de tablas, columnas y restricciones aparecen en fuente monoespaciada. Se ha revisado la redacción de todos los apartados.}
+{Uniformidad y legibilidad del documento completo.}
+{Toda la memoria.}
+{Compilación sin avisos de desbordamiento de líneas y revisión de la lectura completa.}
+
+\cambio{P-05}{Diagrama EER legible}
+{\INF Los diagramas deben ser legibles. El EER original era una imagen de baja resolución, difícil de leer al 100\,\%.}
+{El EER se ha redibujado completo con los cambios del modelo (E-01 a E-11 y F-01 a F-05). Se inserta como gráfico vectorial en una página apaisada propia, con cuatro ampliaciones por zonas (P-07). Se ha añadido un párrafo que explica la notación empleada.}
+{El enunciado (§2.4) exige un diagrama legible al 100\,\%, sin símbolos ambiguos.}
+{Memoria §2.1 y Figuras 1 a 5.}
+{Lectura del diagrama al 100\,\% en las ampliaciones. Cotejo de cada entidad, relación, atributo y cardinalidad con las reglas y con el SQL.}
+
+\cambio{P-07}{Ampliaciones del EER}
+{\REV{§2.4} Con todo el modelo en una sola página A4 apaisada, los atributos quedaban a unos 5 puntos al 100\,\%, por debajo de lo legible.}
+{Se mantiene la vista global (Figura 1) y se añaden cuatro ampliaciones del mismo diagrama vectorial, una por zona: personal y mantenimiento, estaciones y rutas, material rodante con la agregación Viaje, y comercialización (Figuras 2 a 5). Las zonas se solapan para que cada relación aparezca completa en alguna. En las ampliaciones los atributos quedan por encima de 8 puntos.}
+{El enunciado (§2.4) exige legibilidad al 100\,\% y, si el diagrama ocupa varias páginas, vista global y ampliaciones parciales coherentes.}
+{Memoria §2.1, Figuras 1 a 5.}
+{Revisión de las páginas a tamaño real: todos los nombres y cardinalidades se leen sin ampliar.}
+
+\cambio{P-06}{Numeración y terminología coherentes}
+{\INF Los nombres y referencias deben ser coherentes entre apartados. \REV{§1 y §2.2} Las reglas aparecían desordenadas (RN-1 tras RN-19, RN-3 tras RN-13) y algunas sin número.}
+{Las reglas se numeran de RN-01 a RN-26 en orden de aparición y se agrupan por área. Los nombres de entidades, relaciones y atributos son los mismos en las reglas, el diagrama, el modelo relacional, el diccionario y el script. Las referencias a tablas, figuras y apartados son automáticas.}
+{El enunciado pide mantener exactamente la misma terminología en descripción, diagrama y explicación.}
+{Memoria §1.1 y referencias en toda la memoria.}
+{Revisión cruzada de cada RN citada en la tabla de justificación y en el diccionario.}
+
+% =============================================================================
+\section{Cambios de contenido de la memoria}
+% =============================================================================
+\cambio{M-01}{Memoria y script coherentes}
+{\REV{§4 y §5} La memoria justificaba las vistas \tb{VISTA\_ESTACION\_ANDEN} y \tb{VISTA\_PROVEEDOR} y describía pruebas (código EST-01 duplicado, EST-99, NSS repetido, edad negativa, \tb{SQL\%ROWCOUNT}) que no existían en el script, que creaba otras vistas distintas.}
+{La memoria describe ahora exactamente las vistas y las pruebas del script corregido (S-07, S-09).}
+{La repesca exige que el SQL se corresponda con el modelo y las decisiones de la memoria.}
+{Memoria §6 y §7; SQL §3 y §5.}
+{Cada vista y cada prueba citada en la memoria aparece en la salida real de la ejecución (Apéndice A).}
+
+\cambio{M-02}{Recuento de mínimos}
+{\REV{§2.1} El recuento se contradecía: hablaba de «3 entidades débiles» y luego de «dos», de «18 relaciones» con un desglose que sumaba 20, de «dos N:M» cuando había tres, y de «tres derivados» cuando solo había uno.}
+{Tabla de recuento nueva, con el mínimo exigido y los elementos concretos que lo cumplen: 23 tipos de entidad (4 débiles), 3 especializaciones, 2 constructos extendidos, 21 relaciones (2 de tipo 1:1, 16 de tipo 1:N, 2 N:M y 1 ternaria), 2 reflexivas, 4 relaciones con atributos propios, y atributos compuestos, multivaluados y derivados (cifras tras F-01).}
+{El recuento debe poder contrastarse con el diagrama.}
+{Memoria §2.2, Tabla 1.}
+{Recuento manual sobre el diagrama nuevo.}
+
+\cambio{M-03}{Modelo relacional y transformación}
+{\REV{§3} La memoria no incluía el esquema relacional ni explicaba la transformación.}
+{Nuevo apartado con las 28 relaciones (clave primaria, claves candidatas y claves foráneas con su acción de borrado) y la explicación de la transformación de entidades, atributos compuestos, multivaluados y derivados, entidades débiles, relaciones 1:1, 1:N y N:M, reflexivas, ternaria, cada especialización (con la opción elegida y las descartadas) y los dos constructos extendidos.}
+{Es un apartado obligatorio del enunciado (§3 y §5).}
+{Memoria §3.1 y §3.2.}
+{El esquema se generó a partir de la misma definición que el diccionario y se cotejó con el script.}
+
+\cambio{M-04}{Diccionario de datos completo}
+{\REV{§5} El diccionario solo tenía atributo, nulabilidad y restricciones; faltaban el significado y el tipo.}
+{Diccionario de las 28 tablas con atributo, tipo Oracle, nulabilidad, significado y restricciones (con su nombre). Cada tabla indica en su título qué elemento del EER implanta y qué reglas la justifican.}
+{El enunciado exige tabla, atributo, significado, tipo, nulabilidad y restricciones.}
+{Memoria §4.}
+{Cotejo de tipos y restricciones con el script ejecutado.}
+
+\cambio{M-05}{Restricciones preservadas y no preservadas}
+{\REV{§2.3 y §3} No se indicaba qué restricciones del EER garantiza el DDL y cuáles no, ni las reglas que el diagrama no expresa gráficamente.}
+{Nuevo apartado con las reglas que el EER no muestra gráficamente y una tabla que clasifica cada restricción según se garantice de forma declarativa, mediante consulta de comprobación o no se garantice (requeriría disparadores).}
+{El enunciado pide identificar las restricciones que requieren comprobación adicional.}
+{Memoria §2.4 y §3.3.}
+{Las restricciones declarativas tienen su prueba en el script; las comprobadas por consulta aparecen en la salida (totalidad de Tren y Billete).}
+
+\cambio{M-06}{Reglas de negocio y supuestos}
+{\REV{§1} Algunas reglas no explicitaban sus cardinalidades y otras no tenían correspondencia con el diagrama.}
+{Reglas reescritas para que cada una determine las entidades, atributos y cardinalidades que justifica, sin reglas decorativas. Se añade un apartado de supuestos (registros históricos, papel del jefe de estación, significado de Pieza y convención de cardinalidad empleada).}
+{Las cardinalidades deben deducirse de una regla concreta y la convención debe indicarse.}
+{Memoria §1.1 y §1.2.}
+{Cada fila de la tabla de justificación remite a una regla existente.}
+
+\cambio{M-07}{Tabla de justificación}
+{\REV{§2.3} La tabla no justificaba todas las relaciones ni explicaba el criterio de pertenencia de cada especialización.}
+{Tabla con elemento, regla, decisión y justificación para cada especialización, constructo extendido, entidad débil, la ternaria (con el motivo por el que no se descompone), las reflexivas y todas las relaciones binarias.}
+{La tabla debe permitir reconstruir las decisiones del EER.}
+{Memoria §2.3, Tabla 2.}
+{Cotejo de cada fila con el diagrama.}
+
+\cambio{M-08}{Limitaciones y alternativas descartadas}
+{\REV{§5} Las limitaciones repetían reglas en lugar de describir lo que el diseño no controla.}
+{Las limitaciones enumeran ahora lo que el script no garantiza (mínimos del lado 1, totalidades, capacidades máximas, ciclos, solapamiento de viajes). Las alternativas descartadas incluyen las decisiones revisadas en esta repesca y su motivo.}
+{Dar una visión honesta del alcance del diseño.}
+{Memoria §8.}
+{Cada limitación corresponde a una fila «no declarativa» de la tabla de M-05.}
+
+\cambio{M-09}{Uso de IA y evidencia de pruebas}
+{\REV{§6} La sección de IA no indicaba qué propuestas se corrigieron ni cómo se comprobó el resultado.}
+{La sección de IA detalla las tareas en que se usó, qué se corrigió y cómo se verificó. Se añade un apéndice con la salida real de la ejecución de las pruebas.}
+{El enunciado pide declarar qué se corrigió y cómo se comprobó.}
+{Memoria §9 y Apéndice A.}
+{La salida del apéndice es la obtenida en la instancia Oracle 26ai del grupo.}
+
+% =============================================================================
+\section{Cambios en el modelo (EER, memoria y SQL)}
+% =============================================================================
+\cambio{E-01}{Billete: especialización disjunta y total}
+{\REV{apuntes §2.2.5} Billete se presentaba como categorización. Una categoría es subclase de la unión de varias superclases distintas, y Clásico/Especial tienen una única superclase. Además, las subclases repetían atributos de la superclase y Billete\_Clásico no tenía ningún atributo propio.}
+{Billete pasa a ser una especialización disjunta y total. Los atributos comunes (localizador, fecha de compra, precio y asiento) quedan solo en Billete. Billete\_Clásico recibe su atributo propio, \tb{tarifa} (Básico, Elige o Prémium).}
+{Corregir un error conceptual y justificar la existencia de ambas subclases.}
+{Memoria §1.1 (RN-21), §2.3, §3.2; Figura 1; SQL §2.10.}
+{Pruebas «Disyuncion Billete», «NOT NULL (especializacion total)» y «Totalidad Billete».}
+
+\cambio{E-02}{Subclase compartida Tren\_Mixto}
+{\REV{§2.1} Al dejar de ser categorización Billete, el modelo solo tenía un constructo extendido (la agregación Viaje), y se exigen dos de tipos diferentes.}
+{Nueva subclase compartida Tren\_Mixto, subconjunto de la intersección de Tren\_Pasajeros y Tren\_Mercancía, con el atributo propio \tb{carga\_max\_con\_pasaje}. Se implanta con una clave foránea a cada una de las dos subclases.}
+{Responde a una necesidad real del dominio (los trenes mixtos ya aparecían en las reglas) y aporta el segundo constructo sin elementos artificiales.}
+{Memoria §1.1 (RN-11), §2.2, §2.3, §3.2; Figura 1; SQL §2.6.}
+{Prueba «Subclase compartida: tren solo de pasajeros como mixto», rechazada con ORA-02291.}
+
+\cambio{E-03}{Supervisión de técnicos 1:N}
+{\REV{§2.2} La supervisión era 1:1 con supervisor (0,1) y supervisado (1,1): cada técnico solo podía supervisar a uno, y la obligatoriedad exigía una cadena de supervisión sin fin. El script, además, admitía técnicos sin supervisor, en contradicción con la regla.}
+{Relación 1:N con roles supervisor (0,N) y supervisado (0,1). En el script: \tb{dni\_supervisor} admite NULL, \tb{ON DELETE SET NULL} y un CHECK que impide la autosupervisión.}
+{Las cardinalidades deben deducirse de las reglas, no elegirse para cumplir el recuento.}
+{Memoria RN-08, §2.3, §3.2; Figura 1; SQL §2.3.}
+{Pruebas «CHECK reflexiva: tecnico supervisor de si mismo» y «ON DELETE SET NULL».}
+
+\cambio{E-04}{Nueva relación 1:1 DIRIGE}
+{\REV{§2.1} Tras corregir E-03, el modelo necesitaba otra relación 1:1 con significado real.}
+{Relación DIRIGE: Empleado (0,1) dirige Estación (1,1), con el atributo propio \tb{f\_inicio\_jefatura}. Se implanta como clave foránea \tb{NOT NULL} y \tb{UNIQUE} en Estación. Los jefes de estación no tienen rol operativo, lo que además ilustra la parcialidad de la especialización de Empleado.}
+{Todo jefe de estación dirige una sola estación y toda estación tiene un jefe.}
+{Memoria RN-06, §2.3, §3.2; Figura 1; SQL §2.2.}
+{Pruebas «UNIQUE 1:1 DIRIGE» y «NOT NULL (participacion total 1:1): estacion sin jefe».}
+
+\cambio{E-05}{Billete ligado al viaje}
+{\REV{§2.2, coherencia global} El billete no estaba asociado a ningún viaje, de modo que el asiento no se refería a ningún trayecto. A la vez existía una N:M Pasajero–Viaje que representaba la misma información de forma redundante.}
+{Nueva relación CORRESPONDE: Billete (1,1), Viaje (0,N). Se elimina la relación Pasajero–Viaje y su tabla \tb{PASAJERO\_VIAJE}: que un pasajero realiza un viaje se deduce de sus billetes. UNIQUE sobre el viaje y el asiento.}
+{Evitar asociaciones redundantes y modelar que un asiento se vende para un viaje concreto.}
+{Memoria RN-20, §2.3, §3.2; Figura 1; SQL §2.10.}
+{Prueba «UNIQUE: asiento ya vendido en el mismo viaje».}
+
+\cambio{E-06}{Llegada a andén desde el viaje}
+{\REV{§2.2} Cada tren tenía un único andén de llegada fijo, lo que no tiene sentido operativo.}
+{La relación LLEGA se traslada a la agregación: Viaje (1,1), Andén (0,N). En el script, la clave foránea pasa de Tren a Viaje.}
+{Un mismo tren llega a andenes distintos en viajes distintos.}
+{Memoria RN-18, §2.3; Figura 1; SQL §2.6 y §2.9.}
+{Inserción válida del viaje de prueba con su andén de llegada.}
+
+\cambio{E-07}{Atributos multivaluados}
+{\REV{§2.2 y §3} Los idiomas del revisor eran un atributo simple guardado en un VARCHAR2(255). Los teléfonos, marcados como multivaluados, se guardaban en dos columnas, contra la regla de transformación.}
+{Idiomas pasa a ser multivaluado (tabla \tb{REVISOR\_IDIOMA}). Los teléfonos pasan a \tb{EMPLEADO\_TELEFONO}, con clave (dni, orden) y \tb{orden IN (1,2)}, que limita de forma declarativa a dos teléfonos.}
+{Clasificar correctamente los atributos y aplicar el paso 6 del algoritmo de transformación.}
+{Memoria RN-05, §3.2; Figura 1; SQL §2.1 y §2.3.}
+{Pruebas «PK multivaluado: idioma repetido» y «CHECK multivaluado: tercer telefono».}
+
+\cambio{E-08}{Atributos derivados}
+{\REV{§2.1} Solo existía un atributo derivado. La edad del pasajero se almacenaba aunque es derivable, y la duración se expresaba en días, poco útil para trayectos de horas.}
+{Pasajero guarda \tb{f\_nac} y la edad es derivada (se calcula en \tb{VISTA\_PASAJERO\_EDAD}). La duración del viaje es la columna virtual \tb{duracion\_h}, en horas.}
+{Evitar datos que caducan y usar una unidad adecuada.}
+{Memoria RN-15, RN-19, §3.2; Figura 1; SQL §2.5, §2.9 y §3.}
+{Consulta final de la vista con las edades calculadas.}
+
+\cambio{E-09}{Capacidad del vagón}
+{\REV{§4} Una única columna \tb{capacidad} mezclaba plazas y toneladas.}
+{Se sustituye por \tb{plazas} y \tb{toneladas}, con un CHECK de fila que exige la unidad adecuada al tipo de vagón.}
+{Dominio inequívoco para cada valor.}
+{Memoria RN-12; Figura 1; SQL §2.7.}
+{Prueba «CHECK de fila: vagon de mercancias medido en plazas».}
+
+\cambio{E-10}{Cardinalidades mínimas revisadas}
+{\REV{§2.2} Varios mínimos 1 no se deducían de ninguna regla: tren y ruta en CUBRE, taquilla en VENDE, maquinista en OPERA, revisor en REVISA y técnico en INSTALA.}
+{Pasan a 0, cada uno con su justificación (tren en taller, ruta nueva, taquilla sin ventas, empleado recién incorporado).}
+{Cada mínimo debe deducirse de una regla concreta.}
+{Memoria RN-15 a RN-17, RN-20, RN-26 y §2.3; Figura 1.}
+{Cotejo entre reglas, tabla de justificación y diagrama.}
+
+\cambio{E-11}{Roles de la reflexiva ACOPLA}
+{\REV{§2.1} Los roles «conecta/conectado» se explicaban mezclando cardinalidades con valores 0/1, lo que resultaba confuso.}
+{Roles \emph{precede} (0,1) y \emph{sigue} (0,1), con una explicación directa de su significado.}
+{Las reflexivas deben tener roles claramente diferenciados.}
+{Memoria RN-13, §2.3; Figura 1.}
+{Revisión de la tabla de justificación y del diagrama.}
+
+% =============================================================================
+\section{Cambios en el script SQL}
+% =============================================================================
+\cambio{S-01}{Borrado previo re-ejecutable}
+{\REV{§4} Los DROP eran sentencias sueltas: en un esquema limpio fallaban con ORA-00942. El comentario decía que estaban en un bloque PL/SQL, y no era así.}
+{\tb{DROP VIEW IF EXISTS} y \tb{DROP TABLE IF EXISTS \dots{} CASCADE CONSTRAINTS PURGE} para las 3 vistas y las 28 tablas.}
+{El script debe ejecutarse completo varias veces sin intervención y sin errores no tratados.}
+{SQL §1.}
+{Ejecución sobre el esquema con las tablas ya creadas: todos los DROP terminan con éxito.}
+
+\cambio{S-02}{Disyunción de Empleado}
+{\REV{§3} La memoria declaraba disjunta la especialización de Empleado, pero el script permitía que un mismo DNI fuera maquinista y revisor a la vez.}
+{Discriminante \tb{tipo\_empleado} (admite NULL por la parcialidad), \tb{UNIQUE (dni, tipo\_empleado)} y clave foránea compuesta en cada subclase con el tipo fijado por CHECK, como ya se hacía con Billete.}
+{El modelo relacional no debe alterar silenciosamente decisiones del EER.}
+{SQL §2.1 y §2.3.}
+{Prueba «Disyuncion Empleado: un maquinista no puede ser revisor» (ORA-02291) y consulta «Rol de empleado coherente con su subclase».}
+
+\cambio{S-03}{Relación 1:1 ACOPLA}
+{\REV{§3} Sin restricción de unicidad, dos vagones podían tener el mismo vagón siguiente, de modo que la relación no era 1:1.}
+{\tb{UNIQUE (num\_serie\_tren, vagon\_sig\_num)}. Como Oracle indexa las claves parcialmente nulas, impide además que un tren tenga dos últimos vagones.}
+{Implantar el máximo 1 de ambos roles.}
+{SQL §2.7.}
+{Pruebas «UNIQUE 1:1 ACOPLA» (dos casos).}
+
+\cambio{S-04}{Convención de nombres}
+{\REV{§4} Convivían los prefijos \tb{uk\_} y \tb{uq\_} y había restricciones sin nombre (el NOT NULL del NSS).}
+{Convención uniforme \tb{pk\_}, \tb{fk\_}, \tb{uq\_}, \tb{nn\_} y \tb{chk\_} seguida de la tabla y el campo, documentada en la cabecera del script. Todas las restricciones tienen nombre.}
+{El enunciado pide nombrar las restricciones con una convención uniforme.}
+{SQL, cabecera y §2.}
+{Los mensajes de error de las pruebas muestran el nombre de la restricción violada.}
+
+\cambio{S-05}{Acciones referenciales coherentes}
+{\REV{§4} La política de borrado era incoherente: Billete impedía borrar un pasajero mientras Bulto, Reclamación y Pasajero\_Viaje se borraban en cascada, y un comentario de \tb{REVISOR\_VIAJE} afirmaba lo contrario de la restricción que acompañaba.}
+{Política única y documentada: cascada solo para entidades débiles, subclases, multivaluados y filas de asociación dependientes; SET NULL para el supervisor; sin acción para los registros históricos (Billete, Viaje, Instalación, Reclamación) y las referencias a entidades fuertes.}
+{Evitar borrados en cascada no razonados.}
+{SQL, cabecera y comentario de cada tabla; Memoria §5.3.}
+{Pruebas «FK (restrict)» (cuatro casos), «ON DELETE CASCADE» y «ON DELETE SET NULL».}
+
+\cambio{S-06}{Nuevos CHECK}
+{\REV{§4} Faltaban restricciones de dominio para varios atributos con formato o rango conocido.}
+{CHECK de formato para DNI, NSS, CIF, código postal y teléfono; origen distinto de destino en Ruta; llegada estrictamente posterior a la salida; coherencia tipo–capacidad del vagón; vagón no acoplado a sí mismo; autosupervisión; estado y turno de taquilla; tarifa; nivel de seguridad; descuento entre 0 y 100.}
+{El enunciado pide CHECK significativos para dominios, intervalos y condiciones de fila.}
+{SQL §2.}
+{Nueve pruebas CHECK rechazadas con ORA-02290; los datos válidos las satisfacen.}
+
+\cambio{S-07}{Vistas}
+{\REV{§4} Las vistas no enumeraban sus columnas. La vista no actualizable se justificaba solo por usar JOIN, aunque en Oracle una vista con JOIN puede ser parcialmente actualizable (tabla con clave preservada). No había prueba de rechazo.}
+{\tb{VISTA\_RESUMEN\_ESTACION} (no actualizable, con GROUP BY y COUNT) y \tb{VISTA\_PROVEEDOR} (actualizable, de una sola tabla), ambas con sus columnas enumeradas. Se añade \tb{VISTA\_PASAJERO\_EDAD} para el atributo derivado.}
+{Cumplir el enunciado y que la justificación de la no actualizabilidad sea correcta.}
+{SQL §3 y §5; Memoria §6.}
+{UPDATE sobre la vista no actualizable rechazado con ORA-01732. UPDATE sobre \tb{VISTA\_PROVEEDOR} con \tb{SQL\%ROWCOUNT} = 1, cambio visible en la tabla base y deshecho con ROLLBACK.}
+
+\cambio{S-08}{Datos de prueba}
+{\REV{§4} Solo había datos para unas pocas tablas: no se comprobaban proveedores, piezas, técnicos, instalaciones, revisores, seguridad, bultos ni reclamaciones.}
+{Datos para las 28 tablas: trenes de los tres tipos, empleados de todos los roles y sin rol, vagones acoplados, un viaje con revisor, billetes clásico y especial, bultos, reclamaciones e instalaciones.}
+{El enunciado pide datos suficientes para comprobar relaciones, restricciones y vistas.}
+{SQL §4.}
+{Las 71 inserciones terminan con éxito.}
+
+\cambio{S-09}{Batería de pruebas}
+{\REV{§4} No había prueba rechazada de clave primaria ni de varios CHECK, y las pruebas no indicaban un resultado global.}
+{Bloque PL/SQL que, para cada prueba, comprueba que el error obtenido es exactamente el esperado; si no, la cuenta como fallo. Incluye al menos una prueba válida y una rechazada para cada tipo de restricción, pruebas de las especializaciones, de la subclase compartida y de las acciones referenciales, y consultas que verifican las totalidades. Muestra un resumen y termina con ROLLBACK.}
+{Demostrar cada restricción y que la ejecución principal termine sin errores no tratados.}
+{SQL §5; Memoria §7.}
+{50 pruebas correctas y 0 fallidas (Memoria, Apéndice A).}
+
+\cambio{S-10}{Transacciones, tipos y comentarios}
+{\REV{§4} \tb{SET AUTOCOMMIT ON} quitaba sentido a la demostración del ROLLBACK, algunos tipos no se ajustaban al dato y los comentarios tenían erratas («eliminirse», «maintense», «réseau»).}
+{\tb{SET AUTOCOMMIT OFF} con COMMIT explícito tras la carga. Tipos ajustados (NSS de 12, CIF de 9, asiento \tb{VARCHAR2(5) NOT NULL}, potencia en kW, longitud en metros con un decimal). Comentarios reescritos y separados por secciones.}
+{Coherencia transaccional y claridad del script.}
+{SQL, todo el fichero.}
+{Ejecución completa sin errores.}
+
+% =============================================================================
+\section{Cambios de la revisión final}
+\label{sec:final}
+% =============================================================================
+\cambio{F-01}{Origen y destino de la ruta como relaciones con Estación}
+{\REV{§2.2, coherencia global} Ruta guardaba \tb{lugar\_inicio} y \tb{lugar\_fin} como texto, aunque los extremos de una ruta son estaciones, que ya son una entidad: el mismo concepto se representaba dos veces. Además, por eso no se podía comprobar que el andén de llegada estuviese en la estación destino.}
+{Nuevas relaciones 1:N ORIGEN y DESTINO: Estación (0,N), Ruta (1,1). En el script, Ruta tiene \tb{cod\_estacion\_origen} y \tb{cod\_estacion\_destino} (FK NOT NULL a Estación, CHECK de que son distintas) y el UNIQUE \tb{uq\_ruta\_destino}. Viaje añade la FK \tb{fk\_viaje\_destino} (ruta, estación de llegada) $\rightarrow$ (ruta, estación destino), que obliga de forma declarativa a que el andén de llegada esté en la estación destino. Se eliminan las limitaciones correspondientes.}
+{Representar cada concepto una sola vez y convertir RN-18 en una restricción garantizada.}
+{Memoria RN-14, RN-18, §2.2 a §2.4, §3, §4 (RUTA, VIAJE), §8; Figuras 1 y 3; SQL §2.5, §2.9 y §4.}
+{Pruebas «FK: viaje que llega a un anden de la estacion destino» (aceptada), «FK: viaje que llega a un anden que no es de la estacion destino» (ORA-02291) y «CHECK: ruta con origen igual a destino» (ORA-02290).}
+
+\cambio{F-02}{Fecha de instalación multivaluada}
+{\REV{§3} En el EER, INSTALA tenía la fecha como atributo simple, de modo que cada terna técnico–pieza–tren solo podía aparecer una vez; en cambio, el relacional añadía la fecha a la clave para admitir repeticiones. El relacional alteraba el diagrama sin decirlo.}
+{\tb{fecha\_instalacion} pasa a ser un atributo multivaluado de INSTALA (elipse doble). La memoria explica que la tabla \tb{INSTALACION} resulta de transformar la ternaria y su multivaluado, y por qué no se crea una tabla aparte solo con la terna. Los datos de prueba incluyen una terna repetida en dos fechas.}
+{El enunciado no admite un esquema relacional que corrija o altere decisiones del diagrama.}
+{Memoria RN-26, §2.3, §3.2, §4 (INSTALACION), §8; Figuras 1 y 2; SQL §2.8 y §4.}
+{Inserción válida de la misma terna en dos fechas en los datos de prueba.}
+
+\cambio{F-03}{REVISA: Viaje (0,N)}
+{\REV{§2.2} REVISA obligaba a que todo viaje tuviera al menos un revisor, también los de trenes de mercancías, que no llevan revisor ni billetes.}
+{Viaje participa en REVISA con (0,N) (trazo fino en el diagrama). Se elimina de las limitaciones el mínimo «viaje con revisor».}
+{Las cardinalidades deben deducirse de una regla concreta y ser coherentes entre sí.}
+{Memoria RN-17, §2.3, §3.3, §8; Figuras 1 y 3; comentario de SQL §2.9.}
+{Cotejo entre la regla, la tabla de justificación y el diagrama.}
+
+\cambio{F-04}{Jefes de estación sin rol operativo}
+{\REV{§2.2, coherencia global} Las reglas decían que los jefes de estación no tienen rol operativo, pero una prueba nombraba jefe a un técnico.}
+{RN-06 lo establece de forma explícita y se añade a las restricciones que el EER no expresa. En el script, las pruebas de Estación usan dos empleados nuevos sin rol (12121212L y 13131313M), y una consulta comprueba que ningún jefe tiene rol operativo.}
+{Que las pruebas no contradigan las reglas de negocio.}
+{Memoria RN-06, supuestos, §2.3, §2.4, §3.3; SQL §4 y §5.}
+{Prueba «Jefes de estacion con rol operativo (RN-06)»: 0 incumplimientos.}
+
+\cambio{F-05}{Notación del diagrama}
+{\REV{§2.2 y §2.4} Las claves parciales se subrayaban igual que las claves y las dos relaciones identificadoras de Estación se llamaban «tiene» en el diagrama y TIENE\_ANDEN / TIENE\_TAQUILLA en la memoria. Algunas cardinalidades se superponían a las líneas.}
+{Claves parciales con subrayado discontinuo (notación de los apuntes), relaciones renombradas a \tb{tiene\_anden} y \tb{tiene\_taquilla}, y cardinalidades de COMPONE y CONTROLA recolocadas.}
+{Símbolos inequívocos y la misma terminología en descripción, diagrama y explicación.}
+{Memoria §2.1; Figuras 1 a 5; \tb{generar\_eer.py}.}
+{Revisión visual del diagrama.}
+
+\cambio{F-06}{Elementos que cubren varios mínimos}
+{\REV{§2.1, «Coherencia antes que recuento»} ACOPLA (reflexiva y 1:1), SUPERVISA (reflexiva y 1:N), CUBRE (N:M, agregada y con atributos) e INSTALA (ternaria y con atributos) cuentan para más de un mínimo sin que se justificase.}
+{Párrafo nuevo tras el recuento que justifica cada caso y señala qué mínimos dependen de ello. El recuento añade la participación total y parcial y la cardinalidad en todas las participaciones.}
+{El enunciado solo admite que un elemento cubra varios mínimos si se justifica expresamente.}
+{Memoria §2.2.}
+{Cotejo con las reglas citadas.}
+
+\cambio{F-07}{Criterio de pertenencia y justificación de atributos}
+{\REV{§2.2 y §2.3} La tabla de justificación solo daba el criterio de pertenencia de Empleado, y los atributos compuestos, multivaluados y derivados no tenían justificación.}
+{Cada especialización indica su criterio de pertenencia. Se añaden filas para ORIGEN y DESTINO y para los tres tipos de atributos.}
+{El enunciado exige justificar el criterio de pertenencia de cada especialización y los tipos de atributos.}
+{Memoria §2.3.}
+{Cada fila remite a una regla existente.}
+
+\cambio{F-08}{Comentarios del script}
+{\REV{§2.3, misma terminología} Los comentarios del script citaban las reglas con la numeración de la entrega original (por ejemplo, SUPERVISA como RN-10 en lugar de RN-08) y llamaban PARA\_VIAJE a la relación CORRESPONDE.}
+{Todas las referencias RN-xx del script siguen la numeración de la memoria y todas las tablas citan su regla. PARA\_VIAJE pasa a CORRESPONDE y las identificadoras se nombran TIENE\_ANDEN y TIENE\_TAQUILLA.}
+{Mantener exactamente la misma terminología en descripción, diagrama, memoria y script.}
+{SQL, comentarios de las secciones 2 y 5.}
+{Revisión de cada RN-xx del script frente a la memoria.}
+
+\cambio{F-09}{Datos de prueba coherentes con las reglas}
+{\REV{§4} RN-05 exige uno o dos teléfonos por empleado, pero solo dos de los ocho empleados tenían alguno.}
+{Todos los empleados tienen uno o dos teléfonos. Una consulta comprueba el mínimo, que no es declarativo.}
+{La memoria afirma que los datos de prueba respetan los mínimos no declarativos.}
+{SQL §4 y §5; Memoria §7 y §8.}
+{Prueba «Empleados sin ningun telefono (minimo 1, RN-05)»: 0 incumplimientos.}
+
+\cambio{F-10}{Pruebas válidas explícitas y nuevas comprobaciones}
+{\REV{§4, Comprobación} Para UNIQUE, NOT NULL y CHECK la prueba válida eran los datos de carga, que no aparecían en la salida.}
+{Una prueba aceptada explícita para UNIQUE, NOT NULL, CHECK, especialización y la nueva FK de destino, y consultas para comprobar que los trenes de ambos tipos figuran como mixtos (RN-11), que los jefes no tienen rol y el mínimo de teléfonos. Total: 50 pruebas.}
+{El enunciado pide una prueba válida y una rechazada para cada tipo de restricción.}
+{SQL §5; Memoria §7 y Apéndice A.}
+{Ejecución completa del script en Oracle 26ai: 50 pruebas correctas y 0 fallidas.}
+
+% =============================================================================
+\section{Verificación global}
+% =============================================================================
+Antes de la entrega se verificó lo siguiente:
+\begin{itemize}
+\item El script se ejecuta completo en Oracle 26ai sobre un esquema con objetos previos, sin errores no tratados: 50 pruebas correctas y 0 fallidas.
+\item Cada entidad, relación, atributo y cardinalidad del diagrama tiene su regla de negocio, su fila en la tabla de justificación, su tabla en el modelo relacional y en el diccionario, y su implantación en el script.
+\item Los recuentos de la Tabla 1 de la memoria coinciden con el diagrama, y ninguna tabla de la memoria queda partida entre páginas.
+\end{itemize}
+
+\end{document}
