@@ -167,7 +167,7 @@
 \texttt{cod\_alm} & VARCHAR2(10) & No & Código del almacén & PK \\
 \texttt{telefono} & VARCHAR2(15) & Sí & Teléfono de contacto & -- \\
 \texttt{max\_trenes} & NUMBER(4) & Sí & Capacidad máxima de trenes & CHECK > 0 \\
-\texttt{calle, numero, ciudad} & VARCHAR2 & Sí & Componentes de la dirección & -- \\
+\texttt{calle, numero, ciudad} & VARCHAR2 (100, 10, 50) & Sí & Componentes de la dirección & -- \\
 \texttt{cp} & VARCHAR2(5) & Sí & Código postal & CHECK 5 dígitos \\
 \bottomrule
 \end{tabularx}
@@ -216,7 +216,7 @@
 \texttt{cif} & VARCHAR2(9) & No & CIF & PK; CHECK formato letra + 7 dígitos + control \\
 \texttt{nombre} & VARCHAR2(100) & No & Nombre comercial & NN \\
 \texttt{email} & VARCHAR2(100) & Sí & Correo de contacto & CHECK contiene @ \\
-\texttt{calle, numero, ciudad} & VARCHAR2 & Sí & Componentes de la dirección & -- \\
+\texttt{calle, numero, ciudad} & VARCHAR2 (100, 10, 50) & Sí & Componentes de la dirección & -- \\
 \texttt{cp} & VARCHAR2(5) & Sí & Código postal & CHECK 5 dígitos \\
 \bottomrule
 \end{tabularx}
@@ -376,7 +376,7 @@
 \midrule
 \texttt{num\_serie\_tren} & VARCHAR2(15) & No & Tren & PK; FK → TREN, sin acción \\
 \texttt{cod\_ruta} & VARCHAR2(10) & No & Ruta & PK; FK → RUTA, sin acción \\
-\texttt{fecha\_salida} & DATE & No & Fecha y hora de salida & PK \\
+\texttt{fecha\_salida} & DATE & No & Fecha y hora de salida; parte del identificador de CUBRE en el EER & PK \\
 \texttt{fecha\_llegada} & DATE & No & Fecha y hora de llegada & NN; CHECK > fecha\_salida \\
 \texttt{duracion\_h} & NUMBER (virtual) & -- & Derivado: duración en horas & GENERATED ALWAYS AS ((llegada − salida)·24) VIRTUAL \\
 \texttt{dni\_maquinista} & VARCHAR2(9) & No & Maquinista que lo conduce (OPERA) & NN; FK → MAQUINISTA, sin acción \\

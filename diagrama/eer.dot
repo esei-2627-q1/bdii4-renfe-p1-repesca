@@ -8,7 +8,7 @@ RUTA [shape=box, style="filled", fillcolor="#dfe9f7", fontname="Helvetica-Bold",
 cubre [shape=diamond, style="filled", fillcolor="#fbeccb", fontsize=13, width=1.05, height=0.5, peripheries=1, label="cubre", pos="892.8,651.7!"];
 TREN -- cubre [label="(0,N)", fontsize=13, fontcolor="#0b3d78", penwidth=1.3];
 RUTA -- cubre [label="(0,N)", fontsize=13, fontcolor="#0b3d78", penwidth=1.3];
-a1 [shape=ellipse, fontsize=13, margin="0.02,0.01", height=0.3, style="solid", peripheries=1, label="fecha_salida", pos="810.7,700.5!"];
+a1 [shape=ellipse, fontsize=13, margin="0.02,0.01", height=0.3, style="solid", peripheries=1, label=<<U>fecha_salida</U>>, pos="810.7,700.5!"];
 cubre -- a1 [color="#666666"];
 a2 [shape=ellipse, fontsize=13, margin="0.02,0.01", height=0.3, style="solid", peripheries=1, label="fecha_llegada", pos="892.8,727.6!"];
 cubre -- a2 [color="#666666"];

@@ -193,6 +193,8 @@ F-07 & Memoria & Criterio de pertenencia y justificación de atributos \\
 F-08 & SQL & Comentarios con la numeración y la terminología de la memoria \\
 F-09 & SQL & Datos de prueba coherentes con las reglas \\
 F-10 & SQL & Pruebas válidas explícitas y nuevas comprobaciones \\
+F-11 & Modelo & \tb{fecha\_salida} como parte del identificador de CUBRE (Viaje) \\
+F-12 & Memoria & Terminología de RN-16 y precisiones del diccionario \\
 \end{longtable}
 }
 
@@ -423,7 +425,7 @@ F-10 & SQL & Pruebas válidas explícitas y nuevas comprobaciones \\
 {Convención uniforme \tb{pk\_}, \tb{fk\_}, \tb{uq\_}, \tb{nn\_} y \tb{chk\_} seguida de la tabla y el campo, documentada en la cabecera del script. Todas las restricciones tienen nombre.}
 {El enunciado pide nombrar las restricciones con una convención uniforme.}
 {SQL, cabecera y §2.}
-{Los mensajes de error de las pruebas muestran el nombre de la restricción violada.}
+{Revisión del script: todas las restricciones se declaran con \tb{CONSTRAINT} y un nombre que sigue la convención; las pruebas rechazadas obtienen el código de error esperado.}
 
 \cambio{S-05}{Acciones referenciales coherentes}
 {\REV{§4} La política de borrado era incoherente: Billete impedía borrar un pasajero mientras Bulto, Reclamación y Pasajero\_Viaje se borraban en cascada, y un comentario de \tb{REVISOR\_VIAJE} afirmaba lo contrario de la restricción que acompañaba.}
@@ -541,6 +543,20 @@ F-10 & SQL & Pruebas válidas explícitas y nuevas comprobaciones \\
 {SQL §5; Memoria §7 y Apéndice A.}
 {Ejecución completa del script en Oracle 26ai: 50 pruebas correctas y 0 fallidas.}
 
+\cambio{F-11}{Fecha de salida como parte del identificador de CUBRE}
+{\REV{§3} El mismo criterio de F-02 aplicado a la agregación Viaje: el relacional usaba (tren, ruta, \tb{fecha\_salida}) como clave de \tb{VIAJE}, pero en el diagrama \tb{fecha\_salida} era un atributo simple de la N:M CUBRE. Así, el EER no permitía que un tren cubriera dos veces la misma ruta, y el relacional lo corregía sin decirlo.}
+{\tb{fecha\_salida} aparece subrayada en CUBRE como parte del identificador de cada cobertura (viaje). RN-15 lo dice de forma explícita, y la tabla de justificación, la notación, las decisiones de transformación, el diccionario y las alternativas descartadas lo explican. No se modela como multivaluada, como en INSTALA, porque cada salida tiene su propia llegada, maquinista, andén, revisores y billetes.}
+{El enunciado no admite un esquema relacional que corrija o altere decisiones del diagrama.}
+{Memoria RN-15, §2.1, §2.3, §3.2, §4 (VIAJE), §8; Figuras 1 y 4; \tb{generar\_eer.py}. El script no cambia.}
+{Cotejo del diagrama con la clave de \tb{VIAJE}; el script es el mismo que dio 50 pruebas correctas.}
+
+\cambio{F-12}{Terminología de RN-16 y precisiones del diccionario}
+{\REV{§2.3, misma terminología} RN-16 hablaba de un viaje «conducido» por un maquinista, mientras que la relación se llama OPERA en el diagrama, la tabla de justificación y el script. Además, el diccionario no indicaba la longitud de \tb{calle}, \tb{numero} y \tb{ciudad} en ALMACEN y PROVEEDOR, y la memoria decía que todos los teléfonos tienen CHECK de formato.}
+{RN-16 usa el verbo «opera». El diccionario indica VARCHAR2 (100, 10, 50) en las tres direcciones y §5.2 precisa que solo el teléfono de los empleados lleva CHECK de formato.}
+{Mantener la misma terminología y que el diccionario recoja el tipo exacto de cada atributo.}
+{Memoria RN-16, §2.3, §4 (ALMACEN, PROVEEDOR), §5.2.}
+{Cotejo con el script.}
+
 % =============================================================================
 \section{Verificación global}
 % =============================================================================
@@ -548,7 +564,7 @@ Antes de la entrega se verificó lo siguiente:
 \begin{itemize}
 \item El script se ejecuta completo en Oracle 26ai sobre un esquema con objetos previos, sin errores no tratados: 50 pruebas correctas y 0 fallidas.
 \item Cada entidad, relación, atributo y cardinalidad del diagrama tiene su regla de negocio, su fila en la tabla de justificación, su tabla en el modelo relacional y en el diccionario, y su implantación en el script.
-\item Los recuentos de la Tabla 1 de la memoria coinciden con el diagrama, y ninguna tabla de la memoria queda partida entre páginas.
+\item Los recuentos de la Tabla 1 de la memoria coinciden con el diagrama, y ninguna tabla se parte entre páginas salvo la de justificación y el esquema relacional, que repiten la cabecera y no cortan ninguna fila (P-03).
 \end{itemize}
 
 \end{document}

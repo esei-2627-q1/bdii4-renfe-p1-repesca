@@ -164,8 +164,8 @@ Las reglas se numeran en el orden en que se presentan y cada una se referencia e
 \subsubsection*{Explotación}
 \begin{description}[leftmargin=1.4cm,style=nextline]
 \item[\RN{14}] Una \textbf{ruta} se identifica por su código y se registra su distancia en kilómetros. Toda ruta parte de una única estación de \textbf{origen} y termina en una única estación de \textbf{destino}, que son distintas. Una estación puede no ser origen ni destino de ninguna ruta o serlo de varias.
-\item[\RN{15}] Un tren \textbf{cubre} una ruta en una fecha y hora de salida concretas, con su fecha y hora de llegada; la duración en horas se obtiene de ambas. Un tren puede no haber cubierto ninguna ruta (tren nuevo o en taller) o cubrir muchas, y una ruta puede no haberse operado todavía o ser cubierta por varios trenes. Cada cobertura concreta es un \textbf{viaje}, que se relaciona como un objeto con el personal, los billetes y los andenes.
-\item[\RN{16}] Cada viaje es \textbf{conducido} por exactamente un maquinista. Un maquinista puede conducir ningún viaje (recién incorporado) o muchos.
+\item[\RN{15}] Un tren \textbf{cubre} una ruta en una fecha y hora de salida concretas, con su fecha y hora de llegada; la duración en horas se obtiene de ambas. Un tren puede no haber cubierto ninguna ruta (tren nuevo o en taller) o cubrir muchas, y una ruta puede no haberse operado todavía o ser cubierta por varios trenes. El mismo tren cubre la misma ruta muchas veces, en salidas distintas: cada cobertura se identifica por el tren, la ruta y la fecha y hora de salida. Cada cobertura concreta es un \textbf{viaje}, que se relaciona como un objeto con el personal, los billetes y los andenes.
+\item[\RN{16}] Cada viaje lo \textbf{opera} exactamente un maquinista, que lo conduce. Un maquinista puede no operar ningún viaje (recién incorporado) u operar muchos.
 \item[\RN{17}] Un viaje puede ser \textbf{revisado} por varios revisores o por ninguno, porque los trenes de mercancías no llevan revisor. Un revisor puede revisar ningún viaje o muchos. Por cada revisor y viaje se registra el número de incidencias detectadas.
 \item[\RN{18}] Cada viaje \textbf{llega} a un único andén, que pertenece a la estación de destino de su ruta. Un andén puede recibir ningún viaje o muchos.
 \end{description}
@@ -202,7 +202,7 @@ Las reglas se numeran en el orden en que se presentan y cada una se referencia e
 \subsection{Diagrama}
 La Figura~\ref{fig:eer} muestra el modelo completo como vista global. Como a tamaño A4 el texto de la vista global es pequeño, las Figuras~\ref{fig:eer-z1} a~\ref{fig:eer-z4} amplían el mismo diagrama por zonas, de modo que todo se lee al 100\,\%. Las ampliaciones se solapan ligeramente para que cada relación aparezca completa en al menos una de ellas. El diagrama es un gráfico vectorial y puede ampliarse además sin pérdida de calidad.
 
-Notación empleada: rectángulo doble para las entidades débiles y rombo doble para su relación identificadora; elipse doble para los atributos multivaluados y discontinua para los derivados; identificadores con subrayado continuo y claves parciales de las entidades débiles con subrayado discontinuo; trazo grueso para la participación total; círculo \emph{d} u \emph{o} para las especializaciones disjuntas o solapadas, con doble línea hacia la superclase cuando son totales; círculo $\cap$ para la subclase compartida; y caja discontinua para la agregación Viaje. Cada par (mín,máx) indica la participación de la entidad junto a la que aparece.
+Notación empleada: rectángulo doble para las entidades débiles y rombo doble para su relación identificadora; elipse doble para los atributos multivaluados y discontinua para los derivados; identificadores con subrayado continuo (también \tb{fecha\_salida} en CUBRE, que junto con el tren y la ruta identifica cada viaje) y claves parciales de las entidades débiles con subrayado discontinuo; trazo grueso para la participación total; círculo \emph{d} u \emph{o} para las especializaciones disjuntas o solapadas, con doble línea hacia la superclase cuando son totales; círculo $\cap$ para la subclase compartida; y caja discontinua para la agregación Viaje. Cada par (mín,máx) indica la participación de la entidad junto a la que aparece.
 
 
 
@@ -255,13 +255,13 @@ Ningún elemento se ha añadido solo para alcanzar un mínimo: todos proceden de
 \captionof{figure}{Diagrama EER completo (vista global). Las Figuras~\ref{fig:eer-z1} a~\ref{fig:eer-z4} lo amplían por zonas.}
 \label{fig:eer}
 \newpage
-\zoomeer{0 681 958 0}{Ampliación 1 de 4 del EER: personal (especialización de Empleado, SUPERVISA, OPERA) y mantenimiento (Proveedor, Pieza, ternaria INSTALA).}{fig:eer-z1}
+\zoomeer{0 649 921 0}{Ampliación 1 de 4 del EER: personal (especialización de Empleado, SUPERVISA, OPERA) y mantenimiento (Proveedor, Pieza, ternaria INSTALA).}{fig:eer-z1}
 \newpage
-\zoomeer{958 637 0 0}{Ampliación 2 de 4 del EER: estaciones y rutas (DIRIGE, CONTROLA, REVISA, Andén y Taquilla, ORIGEN y DESTINO, LLEGA).}{fig:eer-z2}
+\zoomeer{920 589 0 0}{Ampliación 2 de 4 del EER: estaciones y rutas (DIRIGE, CONTROLA, REVISA, Andén y Taquilla, ORIGEN y DESTINO, LLEGA).}{fig:eer-z2}
 \newpage
-\zoomeer{0 0 958 594}{Ampliación 3 de 4 del EER: material rodante (Vagón y ACOPLA, Almacén, generalización de Tren y subclase compartida Tren\_Mixto) y agregación Viaje.}{fig:eer-z3}
+\zoomeer{0 0 921 565}{Ampliación 3 de 4 del EER: material rodante (Vagón y ACOPLA, Almacén, generalización de Tren y subclase compartida Tren\_Mixto) y agregación Viaje.}{fig:eer-z3}
 \newpage
-\zoomeer{958 0 0 710}{Ampliación 4 de 4 del EER: comercialización (Pasajero, Bulto, Reclamación, Billete y su especialización, VENDE, COMPRA, CORRESPONDE).}{fig:eer-z4}
+\zoomeer{920 0 0 676}{Ampliación 4 de 4 del EER: comercialización (Pasajero, Bulto, Reclamación, Billete y su especialización, VENDE, COMPRA, CORRESPONDE).}{fig:eer-z4}
 \end{landscape}
 \restoregeometry
 
@@ -299,7 +299,8 @@ CONTROLA & RN-07 & 1:N; Seguridad (1,1), Estación (1,N) & Todo vigilante está 
 GUARDA & RN-04, RN-09 & 1:N; Almacén (0,N), Tren (1,1) & Un almacén puede estar vacío; todo tren tiene un almacén asignado. \\
 ORIGEN y DESTINO & RN-14 & Dos 1:N; Estación (0,N), Ruta (1,1) en cada una & Los extremos de una ruta son estaciones de la red, así que se modelan como relaciones con Estación y no como texto: cada concepto se representa una sola vez. Son dos relaciones distintas porque tienen significado distinto; una estación puede no ser extremo de ninguna ruta. \\
 CUBRE & RN-15 & N:M; Tren (0,N), Ruta (0,N); fechas y duración & Ni el tren ni la ruta están obligados a participar (tren en taller, ruta nueva). Las fechas pertenecen a cada cobertura; la duración es derivada. \\
-OPERA & RN-16 & 1:N; Maquinista (0,N), Viaje (1,1) & Todo viaje tiene un único maquinista; un maquinista puede no tener viajes asignados. \\
+Identificador de CUBRE (Viaje) & RN-15 & \tb{fecha\_salida} subrayada: cada viaje se identifica por (tren, ruta, fecha\_salida) & Una ocurrencia de una N:M se identifica solo por el par de entidades, de modo que (tren, ruta) no podría repetirse. Como el mismo tren cubre la misma ruta muchas veces, la fecha de salida se marca en el diagrama como parte del identificador de la cobertura. Así la clave de \tb{VIAJE} en el relacional sale del EER y no lo corrige. No se modela como multivaluada, como en INSTALA, porque cada salida tiene su propia llegada, maquinista, andén, revisores y billetes: es un objeto (la agregación), no un valor repetido. \\
+OPERA & RN-16 & 1:N; Maquinista (0,N), Viaje (1,1) & Todo viaje lo opera (conduce) un único maquinista; un maquinista puede no tener viajes asignados. \\
 REVISA & RN-17 & N:M; Revisor (0,N), Viaje (0,N); atributo incidencias & Varios revisores pueden controlar un mismo viaje y un revisor controla muchos. Viaje participa con mínimo 0 porque los trenes de mercancías no llevan revisor. Las incidencias dependen de la pareja revisor–viaje. \\
 LLEGA & RN-18 & 1:N; Viaje (1,1), Andén (0,N) & La llegada es del viaje concreto, no del tren: el mismo tren llega a andenes distintos en viajes distintos. Que el andén sea de la estación destino de la ruta no se ve en el diagrama (apartado~\ref{sec:noexpresa}). \\
 VENDE & RN-20 & 1:N; Taquilla (0,N), Billete (1,1) & Una taquilla nueva o cerrada puede no haber vendido billetes. \\
@@ -378,7 +379,7 @@ Como INSTALA no tiene más atributos y toda terna tiene al menos una fecha, la p
 
 \subsubsection*{Constructos extendidos}
 \begin{itemize}
-\item \textbf{Agregación Viaje}: la N:M CUBRE se transforma en la relación \tb{VIAJE}, con clave (tren, ruta, fecha de salida). Esa clave es la que referencian las relaciones que salen de la agregación: OPERA y LLEGA como claves foráneas dentro de Viaje (Viaje participa con 1,1), CORRESPONDE como clave foránea en Billete y REVISA en \tb{REVISOR\_VIAJE}. La fecha de salida forma parte de la clave porque un tren cubre la misma ruta muchas veces. Para \RN{18} se añade una segunda clave foránea (\tb{cod\_ruta}, \tb{cod\_estacion\_llegada}) hacia (\tb{cod\_ruta}, \tb{cod\_estacion\_destino}) de Ruta, que se declara UNIQUE: así el andén de llegada solo puede estar en la estación destino de la ruta del viaje, de forma declarativa.
+\item \textbf{Agregación Viaje}: la N:M CUBRE se transforma en la relación \tb{VIAJE}, con clave (tren, ruta, fecha de salida). Esa clave es la que referencian las relaciones que salen de la agregación: OPERA y LLEGA como claves foráneas dentro de Viaje (Viaje participa con 1,1), CORRESPONDE como clave foránea en Billete y REVISA en \tb{REVISOR\_VIAJE}. La fecha de salida forma parte de la clave porque en el EER es parte del identificador de CUBRE (subrayada): un tren cubre la misma ruta muchas veces. Para \RN{18} se añade una segunda clave foránea (\tb{cod\_ruta}, \tb{cod\_estacion\_llegada}) hacia (\tb{cod\_ruta}, \tb{cod\_estacion\_destino}) de Ruta, que se declara UNIQUE: así el andén de llegada solo puede estar en la estación destino de la ruta del viaje, de forma declarativa.
 \item \textbf{Subclase compartida Tren\_Mixto}: relación con la clave del tren y dos claves foráneas, una a \tb{TREN\_PASAJEROS} y otra a \tb{TREN\_MERCANCIA}. Así solo puede ser tren mixto uno que ya pertenezca a ambas subclases, es decir, a su intersección.
 \end{itemize}
 
@@ -427,7 +428,7 @@ El fichero \tb{E1\_REP\_BDII4\_RENFE\_SQL.sql} se ejecuta completo, en orden y s
 \end{enumerate}
 
 \subsection{Tipos de datos}
-Los identificadores alfanuméricos usan \tb{VARCHAR2} con la longitud de su formato real: DNI de 9 caracteres, NSS de 12 dígitos, CIF de 9 caracteres y código postal de 5. Las cantidades usan \tb{NUMBER(p,s)} ajustado a su rango; por ejemplo, la longitud de un andén es \tb{NUMBER(5,1)} en metros y los precios \tb{NUMBER(6,2)} u \tb{NUMBER(8,2)} en euros. Las fechas con hora (salida y llegada de los viajes) usan \tb{DATE}, que en Oracle incluye la hora. Los dominios cerrados se implantan con CHECK~\dots~IN, y los formatos (DNI, NSS, CIF, código postal y teléfono) con \tb{REGEXP\_LIKE}.
+Los identificadores alfanuméricos usan \tb{VARCHAR2} con la longitud de su formato real: DNI de 9 caracteres, NSS de 12 dígitos, CIF de 9 caracteres y código postal de 5. Las cantidades usan \tb{NUMBER(p,s)} ajustado a su rango; por ejemplo, la longitud de un andén es \tb{NUMBER(5,1)} en metros y los precios \tb{NUMBER(6,2)} u \tb{NUMBER(8,2)} en euros. Las fechas con hora (salida y llegada de los viajes) usan \tb{DATE}, que en Oracle incluye la hora. Los dominios cerrados se implantan con CHECK~\dots~IN, y los formatos (DNI, NSS, CIF, código postal y teléfono de los empleados) con \tb{REGEXP\_LIKE}. Los teléfonos de Estación y Almacén no llevan CHECK de formato.
 
 \subsection{Acciones referenciales}
 \begin{table}[!htbp]
@@ -508,6 +509,7 @@ Vistas & UPDATE en VISTA\_PROVEEDOR + ROLLBACK & UPDATE en VISTA\_RESUMEN\_ESTAC
 \subsection{Decisiones alternativas descartadas}
 \begin{itemize}
 \item \textbf{Tres relaciones binarias para las instalaciones}: perderían la terna técnico–pieza–tren y la fecha asociada; se mantiene la ternaria.
+\item \textbf{Fecha de salida como atributo simple de CUBRE}: con la N:M identificada solo por (tren, ruta), un tren no podría cubrir dos veces la misma ruta; se marca como parte del identificador del viaje.
 \item \textbf{Fecha de instalación como atributo simple de INSTALA}: no permitiría registrar la misma terna en fechas distintas, y añadir la fecha a la clave en el relacional habría alterado el diagrama. Se modela como multivaluada.
 \item \textbf{Origen y destino de la ruta como texto}: representaba las estaciones dos veces (como entidad y como texto) e impedía comprobar el andén de llegada. Se sustituyen por las relaciones ORIGEN y DESTINO.
 \item \textbf{REVISA con Viaje (1,N)}: obligaba a asignar revisor a los trenes de mercancías.
@@ -535,6 +537,7 @@ Se utilizó un asistente de IA (Claude, de Anthropic) como herramienta de apoyo.
 \item \textbf{Organización de los cambios}: recopilar y ordenar las modificaciones que fuimos haciendo, para que el documento de cambios presente cada una con la misma estructura (observación, cambio, motivo, ubicación y comprobación).
 \item \textbf{Revisión}: contrastar la entrega original con el enunciado y los apuntes, lo que permitió detectar incoherencias entre la memoria y el script y errores de modelado (por ejemplo, la falsa categorización de Billete), y proponer las correcciones del modelo y del script.
 \item \textbf{Segunda revisión}: una revisión final punto por punto frente a la lista de comprobación del enunciado detectó que el diagrama no se leía al 100\,\%, que los comentarios del script usaban la numeración antigua de las reglas, que los datos de prueba no cumplían el mínimo de un teléfono por empleado y que la clave de \tb{INSTALACION} no se correspondía con el diagrama. Se corrigieron como se detalla en el documento de cambios.
+\item \textbf{Tercera revisión}: aplicando el mismo criterio que en INSTALA, detectó que \tb{fecha\_salida} estaba en la clave de \tb{VIAJE} sin estar marcada como identificador en el diagrama, y que RN-16 no usaba el nombre de la relación OPERA. Se corrigieron el diagrama y la memoria; el script no cambia (ficha F-11 del documento de cambios).
 \end{itemize}
 
 \textbf{Decisiones y correcciones del grupo.} El grupo decidió qué cambios aplicar cuando había varias alternativas, como la subclase compartida Tren\_Mixto como segundo constructo extendido o la relación DIRIGE como nueva 1:1. También corrigió propuestas de la herramienta: por ejemplo, el número de pruebas que indicó inicialmente no coincidía con el obtenido al ejecutar el script (41 en la primera versión corregida), y, aunque en un primer momento se optó por una única figura vectorial, al medir el diagrama al 100\,\% se comprobó que el texto quedaba demasiado pequeño y se volvió a la vista global con ampliaciones por zonas que exige el enunciado (§2.4).
